@@ -1,11 +1,10 @@
 package doc
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/go-resty/resty/v2"
-	"github.com/unified-tool/go-zinc/doc/schemas"
+	"github.com/admpub/go-zinc/doc/schemas"
+	resty "github.com/admpub/resty/v2"
 )
 
 type ZincDocSDK interface {
@@ -37,7 +36,7 @@ func (sdk *zincDocImpl) InsertDocument(index string, doc interface{}) error {
 		return err
 	}
 	if !resp.IsSuccess() {
-		return errors.New(fmt.Sprintf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body())))
+		return fmt.Errorf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body()))
 	}
 	return nil
 }
@@ -48,7 +47,7 @@ func (sdk *zincDocImpl) DeleteDocument(index string, id string) error {
 		return err
 	}
 	if !resp.IsSuccess() {
-		return errors.New(fmt.Sprintf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body())))
+		return fmt.Errorf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body()))
 	}
 	return nil
 }
@@ -59,7 +58,7 @@ func (sdk *zincDocImpl) UpdateDocument(index string, id string, doc interface{})
 		return err
 	}
 	if !resp.IsSuccess() {
-		return errors.New(fmt.Sprintf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body())))
+		return fmt.Errorf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body()))
 	}
 	return nil
 }
@@ -71,7 +70,7 @@ func (sdk *zincDocImpl) SearchDocuments(index string, req *schemas.SearchRequest
 		return nil, err
 	}
 	if !resp.IsSuccess() {
-		return nil, errors.New(fmt.Sprintf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body())))
+		return nil, fmt.Errorf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body()))
 	}
 	return out, nil
 }

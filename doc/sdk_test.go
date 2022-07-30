@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/unified-tool/go-zinc/doc/schemas"
+	"github.com/admpub/go-zinc/doc/schemas"
 )
 
 var (
