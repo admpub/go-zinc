@@ -11,6 +11,11 @@ import (
 )
 
 type ZincDocSDK interface {
+	CreateIndex(name string, p *schemas.IndexProperty, storageType ...string) error
+	ListIndex() (schemas.IndexList, error)
+	ExistIndex(name string) (bool, error)
+	BulkPush(docs []map[string]interface{}) error
+	InsertDocumentWithID(name string, id string, doc interface{}) error
 	InsertDocument(index string, doc interface{}) error
 	DeleteDocument(index string, id string) error
 	UpdateDocument(index string, id string, doc interface{}) error
@@ -98,7 +103,7 @@ func (c *zincDocImpl) InsertDocumentWithID(name string, id string, doc interface
 }
 
 // documention: https://docs.zincsearch.com/api/document/bulk/
-func (c *zincDocImpl) BulkPushDoc(docs []map[string]interface{}) error {
+func (c *zincDocImpl) BulkPush(docs []map[string]interface{}) error {
 	var buf bytes.Buffer
 	for _, doc := range docs {
 		b, err := json.Marshal(doc)
