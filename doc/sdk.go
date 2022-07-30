@@ -2,6 +2,7 @@ package doc
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/admpub/go-zinc/doc/schemas"
 	resty "github.com/admpub/resty/v2"
@@ -19,11 +20,14 @@ type zincDocImpl struct {
 	host   string
 }
 
-func NewSDK(host, user, pwd string) (ZincDocSDK, error) {
+func NewSDK(host, user, pwd string, timeout ...time.Duration) (ZincDocSDK, error) {
 	client := resty.New()
 	client.SetBasicAuth(user, pwd)
 	client.SetBaseURL(host)
 	client.SetDisableWarn(true)
+	if len(timeout) > 0 {
+		client.SetTimeout(timeout[0])
+	}
 	return &zincDocImpl{
 		client: client,
 		host:   host,
