@@ -40,13 +40,16 @@ func (sdk *zincDocImpl) request() *resty.Request {
 	return sdk.client.R()
 }
 
-func (c *zincDocImpl) CreateIndex(name string, p *schemas.IndexProperty) error {
+func (c *zincDocImpl) CreateIndex(name string, p *schemas.IndexProperty, storageType ...string) error {
 	data := &schemas.Index{
 		Name:        name,
 		StorageType: "disk",
 		Mappings: &schemas.IndexMappings{
 			Properties: p,
 		},
+	}
+	if len(storageType) > 0 && len(storageType[0]) > 0 {
+		data.StorageType = storageType[0]
 	}
 	resp, err := c.request().SetBody(data).Put("/api/index")
 	if err != nil {
@@ -58,18 +61,27 @@ func (c *zincDocImpl) CreateIndex(name string, p *schemas.IndexProperty) error {
 	return err
 }
 
+func (c *zincDocImpl) ListIndex() (schemas.IndexList, error) {
+	list := schemas.IndexList{}
+	resp, err := c.request().SetResult(&list).Get("/api/index")
+	if err != nil {
+		return list, err
+	}
+	if !resp.IsSuccess() {
+		return list, fmt.Errorf("code=%d, msg=%s", resp.StatusCode(), string(resp.Body()))
+	}
+	return list, nil
+}
+
 func (c *zincDocImpl) ExistIndex(name string) (bool, error) {
-	resp, err := c.request().Get("/api/index")
+	list, err := c.ListIndex()
 	if err != nil {
 		return false, err
 	}
-	data := map[string]interface{}{}
-	err = json.Unmarshal([]byte(resp.String()), &data)
-	if err != nil {
-		return false, err
-	}
-	if _, ok := data[name]; ok {
-		return true, nil
+	for _, item := range list {
+		if item.Name == name {
+			return true, nil
+		}
 	}
 	return false, nil
 }
