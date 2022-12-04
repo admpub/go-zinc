@@ -38,7 +38,7 @@ func NewSDK(host, user, pwd string, timeout ...time.Duration) (ZincDocSDK, error
 	}
 	host = u.Host
 	if len(u.Scheme) > 0 {
-		host = u.Scheme + `//` + host
+		host = u.Scheme + `://` + host
 	}
 	path := u.Path
 	client := resty.New()
