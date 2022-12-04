@@ -8,6 +8,7 @@ import (
 
 	"github.com/admpub/go-zinc/doc/schemas"
 	resty "github.com/admpub/resty/v2"
+	"github.com/webx-top/restyclient"
 )
 
 type ZincDocSDK interface {
@@ -35,6 +36,7 @@ func NewSDK(host, user, pwd string, timeout ...time.Duration) (ZincDocSDK, error
 	if len(timeout) > 0 {
 		client.SetTimeout(timeout[0])
 	}
+	restyclient.InitRestyHook(client)
 	return &zincDocImpl{
 		client: client,
 		host:   host,
